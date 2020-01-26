@@ -27,11 +27,13 @@ public class PlayerWebSocketHandler extends PlayerWebSocketHandlerSkeleton {
 
     private final PlayerSessionHolder sessionHolder;
 
+    private ObjectMapper objectMapper = new ObjectMapper();
+
     public PlayerWebSocketHandler(Core core) {
         this.core = core;
         sessionHolder = new PlayerSessionHolder();
         Timer timer = new Timer();
-        timer.scheduleAtFixedRate(getUpdateTack(), 0, 1000);
+        timer.scheduleAtFixedRate(getUpdateTack(), 0, 60);
     }
 
     private TimerTask getUpdateTack() {
@@ -79,7 +81,6 @@ public class PlayerWebSocketHandler extends PlayerWebSocketHandlerSkeleton {
 
     @Override
     public void handleMessage(String playerNickname, WebSocketMessage socketMessage) throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
         MessageTemplate template = objectMapper.readValue((String) socketMessage.getPayload(), MessageTemplate.class);
         Message message = parseMessage(playerNickname, template);
         core.getMessageHandlerHolder().handleMessage(message);

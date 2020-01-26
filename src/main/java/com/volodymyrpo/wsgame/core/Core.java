@@ -13,7 +13,7 @@ import java.util.TimerTask;
 @Service
 public class Core {
 
-    private final long TICK_DELAY = 1000;
+    private final long TICK_DELAY = 30;
 
     @Getter
     private final PlayerLogic playerLogic;
@@ -44,7 +44,6 @@ public class Core {
 
             public void run() {
                 playerLogic.update(0L, gameState);
-                logger.info("New tick update");
             }
         };
     }

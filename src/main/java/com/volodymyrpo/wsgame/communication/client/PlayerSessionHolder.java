@@ -11,6 +11,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerSessionHolder {
 
+    private ObjectMapper mapper = new ObjectMapper();
+    private String lastValue;
+
     private Map<String, WebSocketSession> map;
 
     public PlayerSessionHolder() {
@@ -26,11 +29,13 @@ public class PlayerSessionHolder {
     }
 
     public void sendState(GameState gameState) {
-        ObjectMapper mapper = new ObjectMapper();
         map.forEach((nickname, session) -> {
             try {
                 String value = mapper.writeValueAsString(gameState);
-                session.sendMessage(new TextMessage(value));
+                if (session.isOpen() && !value.equals(lastValue)) {
+                    session.sendMessage(new TextMessage(value));
+                    lastValue = value;
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

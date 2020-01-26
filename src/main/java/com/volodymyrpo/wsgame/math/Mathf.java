@@ -10,12 +10,22 @@ public class Mathf {
             return target;
         }
 
-        double signX = Math.copySign(1, target.getX() - position.getX());
-        double signY = Math.copySign(1, target.getY() - position.getY());
+        Point newPoint = new Point(0, 0);
 
-        return new Point(
-                position.getX() + signX * speed,
-                position.getY() + signY * speed
-        );
+        if (Math.abs(position.getX() - target.getX()) <= speed) {
+            newPoint.setX(target.getX());
+        } else {
+            double signX = Math.copySign(1, target.getX() - position.getX());
+            newPoint.setX(position.getX() + signX * speed);
+        }
+
+        if (Math.abs(position.getY() - target.getY()) <= speed) {
+            newPoint.setY(target.getY());
+        } else {
+            double signY = Math.copySign(1, target.getY() - position.getY());
+            newPoint.setY(position.getY() + signY * speed);
+        }
+
+        return newPoint;
     }
 }

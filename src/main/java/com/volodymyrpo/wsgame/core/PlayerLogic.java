@@ -20,7 +20,7 @@ public class PlayerLogic {
             if (Objects.nonNull(player.getTarget()) && !player.getPosition().equals(player.getTarget())) {
                 Point newPosition = Mathf.moveToward(player.getPosition(), player.getTarget(), player.getSpeed());
                 player.setPosition(newPosition);
-                logger.info("Player " + player.getNickname() + " moved to " + player.getPosition());
+//                logger.info("Player " + player.getNickname() + " moved to " + player.getPosition());
             }
         });
     }

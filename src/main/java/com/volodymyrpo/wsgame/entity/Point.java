@@ -7,8 +7,8 @@ import lombok.Data;
 public class Point {
 
     public static final Point ZERO = new Point(0, 0);
-    private final double x;
-    private final double y;
+    private double x;
+    private double y;
 
     public Point(double x, double y) {
         this.x = x;

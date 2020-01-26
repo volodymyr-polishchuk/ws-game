@@ -24,42 +24,42 @@ public class Client {
 
     @PostConstruct
     public void init() {
-        this.core.getMessageHandlerHolder().handleMessage(new Message<Player>() {
-            @Override
-            public MessageGroup getMessageGroup() {
-                return MessageGroup.PLAYER;
-            }
-
-            @Override
-            public MessageAction getMessageAction() {
-                return MessageAction.JOIN;
-            }
-
-            @Override
-            public Player getContent() {
-                return new Player("FirstPlayer1", Point.ZERO);
-            }
-        });
-
-        this.core.getMessageHandlerHolder().handleMessage(new Message<MovePlayerDTO>() {
-            @Override
-            public MessageGroup getMessageGroup() {
-                return MessageGroup.PLAYER;
-            }
-
-            @Override
-            public MessageAction getMessageAction() {
-                return MessageAction.MOVE;
-            }
-
-            @Override
-            public MovePlayerDTO getContent() {
-                MovePlayerDTO dto = new MovePlayerDTO();
-                dto.setPlayerName("FirstPlayer1");
-                dto.setTarget(new Point(5, 5));
-                return dto;
-            }
-        });
+//        this.core.getMessageHandlerHolder().handleMessage(new Message<Player>() {
+//            @Override
+//            public MessageGroup getMessageGroup() {
+//                return MessageGroup.PLAYER;
+//            }
+//
+//            @Override
+//            public MessageAction getMessageAction() {
+//                return MessageAction.JOIN;
+//            }
+//
+//            @Override
+//            public Player getContent() {
+//                return new Player("FirstPlayer1", Point.ZERO);
+//            }
+//        });
+//
+//        this.core.getMessageHandlerHolder().handleMessage(new Message<MovePlayerDTO>() {
+//            @Override
+//            public MessageGroup getMessageGroup() {
+//                return MessageGroup.PLAYER;
+//            }
+//
+//            @Override
+//            public MessageAction getMessageAction() {
+//                return MessageAction.MOVE;
+//            }
+//
+//            @Override
+//            public MovePlayerDTO getContent() {
+//                MovePlayerDTO dto = new MovePlayerDTO();
+//                dto.setPlayerName("FirstPlayer1");
+//                dto.setTarget(new Point(5, 5));
+//                return dto;
+//            }
+//        });
 
 
     }
