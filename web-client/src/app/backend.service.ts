@@ -16,7 +16,7 @@ export class BackendService {
 
   public connect(nickname: string) {
     this.websocket$ = new WebSocketSubject<string>({
-      url: `ws://192.168.0.101:8080/player?name=${nickname}`,
+      url: `ws://localhost:8080/player?name=${nickname}`,
     });
     this.websocket$.subscribe(value => {
       this.message$.next(value);
