@@ -1,16 +1,15 @@
 import { Injectable } from '@angular/core';
 import {WebSocketSubject} from 'rxjs/webSocket';
 import {Observable, Subject} from 'rxjs';
+import {Player} from './model/Player.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BackendService {
 
-  private websocket$: WebSocketSubject<string>;
+  private websocket$: WebSocketSubject<any>;
   private message$ = new Subject();
-  public socket = new Subject();
-
 
   constructor() {
   }
@@ -24,7 +23,7 @@ export class BackendService {
     });
   }
 
-  public getMessage(): Observable<{players: [{nickname: string, position: {x, y}, target: {x, y}, speed: number}]}> {
+  public getMessage(): Observable<{players: Player[]}> {
     return this.message$.asObservable() as any;
   }
 
@@ -32,7 +31,20 @@ export class BackendService {
     this.websocket$.next({
       group: 'PLAYER',
       action: 'MOVE',
-      content: target,
-    } as any);
+      content: {
+        x: Math.round(target.x),
+        y: Math.round(target.y),
+      },
+    });
+  }
+
+  sendAttack(targetNickname: string) {
+    this.websocket$.next({
+      group: 'PLAYER',
+      action: 'ATTACK',
+      content: {
+        target: targetNickname,
+      },
+    });
   }
 }

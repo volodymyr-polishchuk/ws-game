@@ -29,16 +29,19 @@ public class PlayerSessionHolder {
     }
 
     public void sendState(GameState gameState) {
-        map.forEach((nickname, session) -> {
-            try {
-                String value = mapper.writeValueAsString(gameState);
-                if (session.isOpen() && !value.equals(lastValue)) {
-                    session.sendMessage(new TextMessage(value));
-                    lastValue = value;
+        try {
+            final String value = mapper.writeValueAsString(gameState);
+            if (!value.equals(lastValue)) {
+                for (Map.Entry<String, WebSocketSession> entry : map.entrySet()) {
+                    WebSocketSession session = entry.getValue();
+                    if (session.isOpen()) {
+                        session.sendMessage(new TextMessage(value));
+                    }
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+                lastValue = value;
             }
-        });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

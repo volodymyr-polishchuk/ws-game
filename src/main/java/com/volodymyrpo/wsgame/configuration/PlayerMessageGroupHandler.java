@@ -1,9 +1,11 @@
 package com.volodymyrpo.wsgame.configuration;
 
+import com.volodymyrpo.wsgame.communication.dto.AttackPlayerDTO;
 import com.volodymyrpo.wsgame.communication.dto.MovePlayerDTO;
 import com.volodymyrpo.wsgame.communication.message.Message;
 import com.volodymyrpo.wsgame.communication.message.MessageGroupHandler;
 import com.volodymyrpo.wsgame.entity.Player;
+import com.volodymyrpo.wsgame.entity.Point;
 import com.volodymyrpo.wsgame.state.GameState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +33,13 @@ class PlayerMessageGroupHandler implements MessageGroupHandler {
 
             case ATTACK: {
                 logger.info("Handled ATTACK");
+                AttackPlayerDTO dto = (AttackPlayerDTO) message.getContent();
+                Player targetPlayer = gameState.getPlayers()
+                        .stream()
+                        .filter(player -> Objects.equals(player.getNickname(), dto.getTarget()))
+                        .findFirst()
+                        .get();
+                targetPlayer.setHealth(targetPlayer.getHealth() - 10);
                 break;
             }
 

@@ -15,14 +15,44 @@ public class PlayerLogic {
 
     Logger logger = LoggerFactory.getLogger(PlayerLogic.class);
 
-    public void update(long time, GameState gameState) {
+    public void update(long diff, GameState gameState) {
         gameState.getPlayers().forEach(player -> {
-            if (Objects.nonNull(player.getTarget()) && !player.getPosition().equals(player.getTarget())) {
-                Point newPosition = Mathf.moveToward(player.getPosition(), player.getTarget(), player.getSpeed());
-                player.setPosition(newPosition);
-//                logger.info("Player " + player.getNickname() + " moved to " + player.getPosition());
-            }
+            move(player);
+            checkHealth(player);
+            heal(player, diff);
         });
+    }
+
+    private void checkHealth(Player player) {
+        if (player.getHealth() <= 0) {
+            kill(player);
+        }
+    }
+
+    private void kill(Player player) {
+        player.setHealth(player.getMaxHealth());
+        player.moveTo(new Point(100, 100));
+    }
+
+    private void heal(Player player, long diff) {
+        if (player.getHealth() < player.getMaxHealth()
+            && System.currentTimeMillis() - player.getLastHealTime() > 2000) {
+            double healPoints = player.getHealingPerSecond() * 2;
+            if (player.getHealth() + healPoints > player.getMaxHealth()) {
+                player.setHealth(player.getMaxHealth());
+            } else {
+                player.setHealth(player.getHealth() + healPoints);
+            }
+            player.setLastHealTime(System.currentTimeMillis());
+        }
+    }
+
+    private void move(Player player) {
+        if (Objects.nonNull(player.getTarget()) && !player.getPosition().equals(player.getTarget())) {
+            Point newPosition = Mathf.moveToward(player.getPosition(), player.getTarget(), player.getSpeed());
+            player.setPosition(newPosition);
+//                logger.info("Player " + player.getNickname() + " moved to " + player.getPosition());
+        }
     }
 
     public boolean playerInGame(GameState gameState, String nickname) {

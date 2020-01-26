@@ -1,6 +1,7 @@
 package com.volodymyrpo.wsgame.communication.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.volodymyrpo.wsgame.communication.dto.AttackPlayerDTO;
 import com.volodymyrpo.wsgame.communication.dto.MovePlayerDTO;
 import com.volodymyrpo.wsgame.communication.message.Message;
 import com.volodymyrpo.wsgame.communication.message.MessageAction;
@@ -57,7 +58,7 @@ public class PlayerWebSocketHandler extends PlayerWebSocketHandlerSkeleton {
 
             @Override
             public Player getContent() {
-                return new Player(nickname, Point.ZERO);
+                return new Player(nickname, new Point(100, 100));
             }
         });
     }
@@ -93,11 +94,25 @@ public class PlayerWebSocketHandler extends PlayerWebSocketHandlerSkeleton {
                     return parseMoveMessage(playerNickname, template.getContent());
                 }
                 case ATTACK: {
-                    return null;
+                    return parseAttackMessage(playerNickname, template.getContent());
                 }
             }
         }
         return null;
+    }
+
+    private Message parseAttackMessage(String playerNickname, Map<String, Object> content) {
+        return new PlayerMessage<AttackPlayerDTO>() {
+            @Override
+            public MessageAction getMessageAction() {
+                return MessageAction.ATTACK;
+            }
+
+            @Override
+            public AttackPlayerDTO getContent() {
+                return new AttackPlayerDTO(playerNickname, (String) content.get("target"));
+            }
+        };
     }
 
     private Message parseMoveMessage(String playerNickname, Map<String, Object> content) {

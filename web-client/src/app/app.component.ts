@@ -1,6 +1,7 @@
 import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import {BackendService} from './backend.service';
 import {throttleTime} from 'rxjs/operators';
+import {Player} from './model/Player.model';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +15,10 @@ export class AppComponent implements OnInit {
   private context: CanvasRenderingContext2D;
   private hasFullScreen = false;
   private canvas: HTMLCanvasElement;
+  private lastState: { players: Player[] };
+  private targetNickname;
+  private currentPlayerNickname = 'Player_' + (Math.random() * 1000).toFixed(0);
+  private translate = { x: 100, y: 100 };
 
   constructor(private backend: BackendService) {
   }
@@ -25,10 +30,14 @@ export class AppComponent implements OnInit {
     this.canvas.addEventListener('click', ev => this.canvasClick(ev));
     this.resize();
     this.redraw();
-    this.backend.connect('Player' + (Math.random() * 100).toFixed(0));
+    this.backend.connect(this.currentPlayerNickname);
     this.backend.getMessage()
       .pipe(throttleTime(30))
       .subscribe(state => {
+        this.lastState = state;
+        const player = state.players.find(p => p.nickname === this.currentPlayerNickname);
+        this.translate.x = Math.round(this.canvas.width / 2) - player.position.x;
+        this.translate.y = Math.round(this.canvas.height / 2) - player.position.y;
         this.redraw(state);
       });
   }
@@ -41,22 +50,74 @@ export class AppComponent implements OnInit {
   }
 
   private canvasClick(event: MouseEvent) {
-    this.backend.sendMove({ x: event.offsetX, y: event.offsetY });
+    const offsetX = event.offsetX - this.translate.x;
+    const offsetY = event.offsetY - this.translate.y;
+    const findPlayer = this.lastState.players
+      .find(player => player.position.x - 10 <= offsetX
+        && player.position.x + 10 >= offsetX
+        && player.position.y - 10 <= offsetY
+        && player.position.y + 10 >= offsetY
+        && player.nickname !== this.currentPlayerNickname);
+    this.targetNickname = findPlayer ? findPlayer.nickname : null;
+    if (this.targetNickname) {
+      this.backend.sendAttack(this.targetNickname);
+    } else {
+      this.backend.sendMove({ x: offsetX, y: offsetY });
+    }
     console.log('Click', event);
   }
 
-  private redraw(state?: {players: [{nickname: string, position: {x, y}, target: {x, y}, speed: number}]}) {
+  private redraw(state?: {players: Player[]}) {
     this.context.fillStyle = '#608038';
     this.context.fillRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+    this.context.translate(this.translate.x, this.translate.y);
     if (state) {
-      state.players.forEach(value => {
+      state.players.forEach(player => {
         const oldStyle = this.context.fillStyle;
-        this.context.fillStyle = 'red';
-        this.context.fillRect(value.position.x - 10, value.position.y - 10, 20, 20);
-        const nicknameWidth = this.context.measureText(value.nickname).width;
-        this.context.strokeText(value.nickname, value.position.x - nicknameWidth / 2, value.position.y - 15);
+        const oldStroke = this.context.strokeStyle;
+
+        // Draw player body
+        if (player.nickname === this.targetNickname) {
+          this.context.fillStyle = 'red';
+        } else {
+          this.context.fillStyle = 'skyblue';
+        }
+        this.context.fillRect(player.position.x - 10, player.position.y - 10, 20, 20);
+
+        // Draw player nickname
+        const nicknameWidth = this.context.measureText(player.nickname).width;
+        this.context.strokeText(player.nickname, player.position.x - nicknameWidth / 2, player.position.y - 20);
+
+        // Draw health bar
+        this.context.strokeStyle = '#7B241C';
+        this.context.beginPath();
+        this.context.rect(player.position.x - 20, player.position.y - 16, 40, 4);
+        this.context.stroke();
+
+        this.context.fillStyle = '#EC7063';
+        const maxHealthWidth = 38;
+        this.context.fillRect(
+          player.position.x - 19,
+          player.position.y - 15,
+          (player.health / player.maxHealth) * maxHealthWidth,
+          2
+        );
+
+        // Draw target
+        if (player.nickname === this.currentPlayerNickname
+            && player.target
+            && (player.target.x !== player.position.x
+            || player.target.y !== player.position.y)) {
+          this.context.beginPath();
+          this.context.ellipse(player.target.x, player.target.y, 6, 6, 0, 0, 180);
+          this.context.stroke();
+        }
+
         this.context.fillStyle = oldStyle;
+        this.context.strokeStyle = oldStroke;
       });
     }
+    this.context.translate(-this.translate.x, -this.translate.y);
   }
+
 }

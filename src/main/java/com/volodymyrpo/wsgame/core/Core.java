@@ -43,7 +43,7 @@ public class Core {
             Logger logger = LoggerFactory.getLogger(TimerTask.class);
 
             public void run() {
-                playerLogic.update(0L, gameState);
+                playerLogic.update(TICK_DELAY, gameState);
             }
         };
     }
