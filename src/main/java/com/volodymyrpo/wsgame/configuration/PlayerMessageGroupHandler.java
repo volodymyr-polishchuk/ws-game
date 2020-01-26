@@ -42,9 +42,9 @@ class PlayerMessageGroupHandler implements MessageGroupHandler {
             }
 
             case LEAVE: {
-                Player player = (Player) message.getContent();
+                String nickname = (String) message.getContent();
                 gameState.getPlayers()
-                        .removeIf(value -> value.getNickname().equals(player.getNickname()));
+                        .removeIf(value -> value.getNickname().equals(nickname));
                 logger.info("Handled LEAVE");
             }
         }

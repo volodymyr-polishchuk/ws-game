@@ -13,8 +13,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketMessage;
+import org.springframework.web.socket.WebSocketSession;
 
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class PlayerWebSocketHandler extends PlayerWebSocketHandlerSkeleton {
 
@@ -22,12 +25,27 @@ public class PlayerWebSocketHandler extends PlayerWebSocketHandlerSkeleton {
 
     private final Core core;
 
+    private final PlayerSessionHolder sessionHolder;
+
     public PlayerWebSocketHandler(Core core) {
         this.core = core;
+        sessionHolder = new PlayerSessionHolder();
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(getUpdateTack(), 0, 1000);
+    }
+
+    private TimerTask getUpdateTack() {
+        return new TimerTask() {
+            @Override
+            public void run() {
+                sessionHolder.sendState(core.getGameState());
+            }
+        };
     }
 
     @Override
-    public void afterConnectionEstablished(String nickname) {
+    public void afterConnectionEstablished(String nickname, WebSocketSession session) {
+        sessionHolder.joinPlayer(nickname, session);
         core.getMessageHandlerHolder().handleMessage(new PlayerMessage<Player>() {
 
             @Override
@@ -44,6 +62,7 @@ public class PlayerWebSocketHandler extends PlayerWebSocketHandlerSkeleton {
 
     @Override
     public void afterConnectionClosed(String nickname, CloseStatus closeStatus) throws Exception {
+        sessionHolder.kickPlayer(nickname);
         core.getMessageHandlerHolder().handleMessage(new PlayerMessage() {
             @Override
             public MessageAction getMessageAction() {
@@ -52,7 +71,7 @@ public class PlayerWebSocketHandler extends PlayerWebSocketHandlerSkeleton {
 
             @Override
             public Object getContent() {
-                return null;
+                return nickname;
             }
         });
     }

@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.socket.*;
@@ -35,6 +36,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
                     @Override
                     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) {
                         Optional<String> nameFromQuery = PlayerWebSocketHandler.getNameFromQuery(request.getURI());
+                        response.setStatusCode(HttpStatus.CONFLICT);
                         return nameFromQuery.isPresent()
                                 && !core.getPlayerLogic().playerInGame(core.getGameState(), nameFromQuery.get());
                     }

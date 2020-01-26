@@ -26,7 +26,7 @@ public class PlayerLogic {
     }
 
     public boolean playerInGame(GameState gameState, String nickname) {
-        return false;
+        return gameState.getPlayers().stream().anyMatch(player -> player.getNickname().equals(nickname));
     }
 
 

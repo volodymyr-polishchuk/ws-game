@@ -14,7 +14,7 @@ public abstract class PlayerWebSocketHandlerSkeleton implements WebSocketHandler
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        this.afterConnectionEstablished(getNameFromQuery(session.getUri()).get());
+        this.afterConnectionEstablished(getNameFromQuery(session.getUri()).get(), session);
     }
 
     @Override
@@ -39,7 +39,7 @@ public abstract class PlayerWebSocketHandlerSkeleton implements WebSocketHandler
 
     }
 
-    public void afterConnectionEstablished(String nickname) {
+    public void afterConnectionEstablished(String nickname, WebSocketSession session) {
 
     }
 

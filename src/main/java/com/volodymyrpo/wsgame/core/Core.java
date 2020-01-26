@@ -1,7 +1,6 @@
 package com.volodymyrpo.wsgame.core;
 
 import com.volodymyrpo.wsgame.communication.message.MessageHandlerHolder;
-import com.volodymyrpo.wsgame.entity.Player;
 import com.volodymyrpo.wsgame.state.GameState;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -48,10 +47,6 @@ public class Core {
                 logger.info("New tick update");
             }
         };
-    }
-
-    public Player findPlayerByNickname(String nickname) {
-        return playerLogic.findPlayerByNickname(nickname, gameState);
     }
 
 }
