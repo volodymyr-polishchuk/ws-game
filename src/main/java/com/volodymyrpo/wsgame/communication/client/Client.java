@@ -55,7 +55,7 @@ public class Client {
             @Override
             public MovePlayerDTO getContent() {
                 MovePlayerDTO dto = new MovePlayerDTO();
-                dto.setPlayer(new Player("FirstPlayer1"));
+                dto.setPlayerName("FirstPlayer1");
                 dto.setTarget(new Point(5, 5));
                 return dto;
             }

@@ -22,7 +22,7 @@ class PlayerMessageGroupHandler implements MessageGroupHandler {
                 MovePlayerDTO dto = (MovePlayerDTO) message.getContent();
                 Player player = gameState.getPlayers()
                         .stream()
-                        .filter(value -> Objects.equals(value.getNickname(), dto.getPlayer().getNickname()))
+                        .filter(value -> Objects.equals(value.getNickname(), dto.getPlayerName()))
                         .findFirst()
                         .get();
                 player.setTarget(dto.getTarget().copy());

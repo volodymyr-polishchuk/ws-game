@@ -1,5 +1,6 @@
 package com.volodymyrpo.wsgame.core;
 
+import com.volodymyrpo.wsgame.entity.Player;
 import com.volodymyrpo.wsgame.entity.Point;
 import com.volodymyrpo.wsgame.math.Mathf;
 import com.volodymyrpo.wsgame.state.GameState;
@@ -24,5 +25,16 @@ public class PlayerLogic {
         });
     }
 
+    public boolean playerInGame(GameState gameState, String nickname) {
+        return false;
+    }
 
+
+    public Player findPlayerByNickname(String nickname, GameState gameState) {
+        return gameState.getPlayers()
+                .stream()
+                .filter(player -> player.getNickname().equals(nickname))
+                .findFirst()
+                .orElse(null);
+    }
 }
