@@ -1,14 +1,16 @@
 package com.volodymyrpo.wsgame.core;
 
-import com.volodymyrpo.wsgame.communication.MessageHandlerHolder;
+import com.volodymyrpo.wsgame.communication.message.MessageHandlerHolder;
 import com.volodymyrpo.wsgame.state.GameState;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
+@Service
 public class Core {
 
     private final long TICK_DELAY = 1000;

@@ -1,4 +1,4 @@
-package com.volodymyrpo.wsgame.communication;
+package com.volodymyrpo.wsgame.communication.message;
 
 import com.volodymyrpo.wsgame.state.GameState;
 
