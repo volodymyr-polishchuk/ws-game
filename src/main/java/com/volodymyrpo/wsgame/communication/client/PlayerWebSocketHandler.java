@@ -34,7 +34,7 @@ public class PlayerWebSocketHandler extends PlayerWebSocketHandlerSkeleton {
         this.core = core;
         sessionHolder = new PlayerSessionHolder();
         Timer timer = new Timer();
-        timer.scheduleAtFixedRate(getUpdateTack(), 0, 60);
+        timer.scheduleAtFixedRate(getUpdateTack(), 0, 600);
     }
 
     private TimerTask getUpdateTack() {

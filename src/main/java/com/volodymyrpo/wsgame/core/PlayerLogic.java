@@ -17,7 +17,7 @@ public class PlayerLogic {
 
     public void update(long diff, GameState gameState) {
         gameState.getPlayers().forEach(player -> {
-            move(player);
+            move(player, diff);
             checkHealth(player);
             heal(player, diff);
         });
@@ -47,11 +47,11 @@ public class PlayerLogic {
         }
     }
 
-    private void move(Player player) {
+    private void move(Player player, long diff) {
         if (Objects.nonNull(player.getTarget()) && !player.getPosition().equals(player.getTarget())) {
-            Point newPosition = Mathf.moveToward(player.getPosition(), player.getTarget(), player.getSpeed());
+            double speedPerFrame = player.getSpeed() * (diff / 1000d);
+            Point newPosition = Mathf.moveToward(player.getPosition(), player.getTarget(), speedPerFrame);
             player.setPosition(newPosition);
-//                logger.info("Player " + player.getNickname() + " moved to " + player.getPosition());
         }
     }
 

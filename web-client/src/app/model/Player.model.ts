@@ -5,4 +5,9 @@ export interface Player {
   speed: number;
   health: number;
   maxHealth: number;
+  bounce: {
+    height: number;
+    width: number;
+    center: {x, y};
+  };
 }
